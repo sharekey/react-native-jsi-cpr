@@ -194,7 +194,13 @@ const processResponse = async (
       }
       resolve(processedError);
     } else {
-      response = prepareResponse(response);
+      if (defaultConfig.stringifyResponse) {
+        if (defaultConfig.customStringify) {
+          response = defaultConfig.customStringify(response);
+        } else {
+          response = prepareResponse(response);
+        }
+      }
       if (defaultConfig.logResponse) {
         defaultConfig.logResponse({ ...params }, { ...response });
       }
@@ -229,6 +235,10 @@ export class JsiHttp {
 
     if (!this.defaultConfig.logResponse && isDebug) {
       this.defaultConfig.logResponse = defaultLogResponse;
+    }
+
+    if (this.defaultConfig.stringifyResponse !== false) {
+      this.defaultConfig.stringifyResponse = true;
     }
   }
 

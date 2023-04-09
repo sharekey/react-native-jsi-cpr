@@ -84,7 +84,9 @@ export type RequestInterceptor = (
 export interface JsiDefaultRequest extends BaseParams {
   logRequest?: LogRequest;
   logResponse?: LogResponse;
+  customStringify?: typeof JSON.stringify;
   logErrorResponse?: LogError;
+  stringifyResponse?: boolean,
   skipResponseHeaders?: boolean;
   requestInterceptor?: RequestInterceptor;
 }
