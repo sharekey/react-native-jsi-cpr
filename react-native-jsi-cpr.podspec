@@ -24,8 +24,8 @@ Pod::Spec.new do |s|
     "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
   }
 
+  s.dependency "React"
   s.dependency "React-Core"
   s.dependency "React-callinvoker"
-  s.dependency 'ReactCommon/turbomodule/core'
   s.dependency 'curl'
 end
