@@ -101,6 +101,7 @@ android {
             "**/libjsi.so",
             "**/libreact_nativemodule_core.so",
             "**/libturbomodulejsijni.so",
+            "**/libreactnative.so",
             "**/MANIFEST.MF",
             ""
     ]

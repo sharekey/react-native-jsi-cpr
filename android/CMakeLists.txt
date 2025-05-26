@@ -81,12 +81,10 @@ find_package(curl REQUIRED CONFIG)
 message(WARNING "JSI-WS linking: CMAKE_CURRENT_SOURCE_DIR=${ANDROID_ABI}")
 target_link_libraries(
         ${PACKAGE_NAME}
-        ReactAndroid::turbomodulejsijni
         fbjni::fbjni
         ${LOG_LIB}
         ReactAndroid::jsi
-        ReactAndroid::reactnativejni
-        ReactAndroid::react_nativemodule_core
+        ReactAndroid::reactnative
         curl::curl
         ${z-lib}
         android
