@@ -130,8 +130,8 @@ repositories {
 
 dependencies {
   // noinspection GradleDynamicVersion
-  implementation 'com.android.ndk.thirdparty:curl:7.79.1-beta-1'
-  implementation 'com.android.ndk.thirdparty:openssl:1.1.1l-beta-1'
+  implementation 'com.github.brunotl.ndk.thirdparty:curl:7.85.0-beta-1'
+  implementation 'com.github.brunotl.ndk.thirdparty:openssl:3.2.1-beta-4'
 
   implementation "com.facebook.react:react-android:"
   implementation "com.facebook.react:hermes-android:"
