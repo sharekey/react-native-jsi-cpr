@@ -58,13 +58,49 @@ def reactNativeArchitectures() {
 def reactProperties = new Properties()
 file("$nodeModules/react-native/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
 
+def resolveNdkDirectory(ndkVersion) {
+  def localPropertiesFile = rootProject.file("local.properties")
+  if (!localPropertiesFile.exists()) {
+    return null
+  }
+  def localProperties = new Properties()
+  localPropertiesFile.withInputStream { localProperties.load(it) }
+  def sdkDir = localProperties.getProperty("sdk.dir")
+  if (sdkDir == null) {
+    return null
+  }
+  def candidate = new File(sdkDir, "ndk/${ndkVersion}")
+  if (!candidate.exists()) {
+    return null
+  }
+  def sourceProperties = new File(candidate, "source.properties")
+  if (sourceProperties.exists()) {
+    return candidate
+  }
+  def nestedWithSource = candidate.listFiles()?.find { new File(it, "source.properties").exists() }
+  return nestedWithSource
+}
+
+def configuredNdkVersion = getExtOrDefault('ndkVersion')
+def resolvedNdk = resolveNdkDirectory(configuredNdkVersion)
+if (resolvedNdk != null && resolvedNdk.exists()) {
+  rootProject.ext.ndkPath = resolvedNdk.absolutePath
+  System.setProperty("ndk.dir", resolvedNdk.absolutePath)
+  logger.warn("JSI-WS: Using resolved NDK path: ${resolvedNdk.absolutePath}")
+} else {
+  logger.warn("JSI-WS: Could not resolve embedded NDK path for version ${configuredNdkVersion}, falling back to default lookup.")
+}
+
 android {
   buildFeatures {
     prefab true
   }
   compileSdkVersion safeExtGet('compileSdkVersion', 30)
   buildToolsVersion safeExtGet('buildToolsVersion', '30.0.0')
-  ndkVersion getExtOrDefault('ndkVersion')
+  ndkVersion configuredNdkVersion
+  if (resolvedNdk != null && resolvedNdk.exists()) {
+    ndkPath resolvedNdk.absolutePath
+  }
 
   buildFeatures {
     prefab true
