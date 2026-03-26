@@ -85,7 +85,7 @@ target_link_libraries(
         ${LOG_LIB}
         ReactAndroid::jsi
         ReactAndroid::reactnative
-        curl::curl
+        curl::curl_static
         ${z-lib}
         android
 )
