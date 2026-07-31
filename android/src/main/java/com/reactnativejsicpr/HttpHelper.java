@@ -26,18 +26,27 @@ public class HttpHelper {
   public boolean install(ReactApplicationContext context) {
     try {
       JavaScriptContextHolder jsContext = context.getJavaScriptContextHolder();
-      CallInvokerHolder jsCallInvokerHolder = context.getCatalystInstance().getJSCallInvokerHolder();
-      mHybridData = initHybrid(jsContext.get(), (CallInvokerHolderImpl) jsCallInvokerHolder);
+      CallInvokerHolder jsCallInvokerHolder = context.getJSCallInvokerHolder();
+      if (jsContext == null || !(jsCallInvokerHolder instanceof CallInvokerHolderImpl)) {
+        return false;
+      }
 
       File certificateBundleFile = certificateBundle(context);
       String path = "";
       if (writeCertificateBundle(context, certificateBundleFile)) {
         path = certificateBundleFile.getAbsolutePath();
       }
-      System.out.println("-=== " + path);
-      installJSIBindings(path);
+
+      synchronized (jsContext) {
+        long runtimePointer = jsContext.get();
+        if (runtimePointer == 0) {
+          return false;
+        }
+        mHybridData = initHybrid(runtimePointer, (CallInvokerHolderImpl) jsCallInvokerHolder);
+        installJSIBindings(path);
+      }
       return true;
-    } catch (Exception exception) {
+    } catch (Throwable error) {
       return false;
     }
   }
