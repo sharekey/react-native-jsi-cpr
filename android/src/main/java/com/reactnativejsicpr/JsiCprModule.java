@@ -2,17 +2,13 @@ package com.reactnativejsicpr;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.facebook.react.bridge.Promise;
+import com.facebook.fbreact.specs.NativeJsiCprSpec;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 
 @ReactModule(name = JsiCprModule.NAME)
-public class JsiCprModule extends ReactContextBaseJavaModule {
-  public static final String NAME = "JsiCpr";
+public class JsiCprModule extends NativeJsiCprSpec {
+  public static final String NAME = NativeJsiCprSpec.NAME;
 
   private HttpHelper httpHelper;
 
@@ -21,20 +17,17 @@ public class JsiCprModule extends ReactContextBaseJavaModule {
   }
 
   @Override
-  @NonNull
-  public String getName() {
-    return NAME;
-  }
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
   public boolean install() {
     try {
       System.loadLibrary("react-native-jsi-cpr");
       httpHelper = new HttpHelper();
-      httpHelper.install(getReactApplicationContext());
-      return true;
-    } catch (Exception exception) {
-      Log.e(NAME, "Failed to install JSI Bindings!", exception);
+      boolean installed = httpHelper.install(getReactApplicationContext());
+      if (!installed) {
+        Log.e(NAME, "JSI runtime or CallInvoker is unavailable");
+      }
+      return installed;
+    } catch (Throwable error) {
+      Log.e(NAME, "Failed to install JSI bindings", error);
       return false;
     }
   }

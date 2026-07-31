@@ -1,9 +1,14 @@
-import { JsiDefaultRequest, JsiMethod, JsiRequest } from './types';
+import { JsiMethod } from './types';
+import type { JsiDefaultRequest, JsiRequest, SimpleRequest } from './types';
 
 const commonHeaders = Object.keys(JsiMethod);
+type CurlRequest = Partial<JsiRequest & JsiDefaultRequest> & {
+  data?: SimpleRequest['data'];
+};
+
 export class CurlHelper {
-  private request: Partial<JsiRequest & JsiDefaultRequest>;
-  constructor(config: Partial<JsiRequest & JsiDefaultRequest>) {
+  private request: CurlRequest;
+  constructor(config: CurlRequest) {
     this.request = config;
   }
 

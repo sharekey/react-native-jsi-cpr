@@ -58,6 +58,16 @@
     "react": "*",
     "react-native": "*"
   },
+  "codegenConfig": {
+    "name": "JsiCprSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "outputDir": {
+      "ios": "ios/generated",
+      "android": "android/generated"
+    },
+    "includesGeneratedCode": true
+  },
   "eslintConfig": {
     "root": true,
     "extends": [

@@ -1,35 +1,38 @@
-//
-// Created by Sergei Golishnikov on 06/03/2022.
-//
+#pragma once
 
 #include <fbjni/fbjni.h>
 #include <jsi/jsi.h>
 #include <ReactCommon/CallInvokerHolder.h>
+
 #include "JsiHttp.h"
 
-class HttpHelper : public facebook::jni::HybridClass<HttpHelper> {
+namespace reactnativejsicpr {
 
-public:
-    static constexpr auto kJavaDescriptor = "Lcom/reactnativejsicpr/HttpHelper;";
-    static facebook::jni::local_ref<jhybriddata> initHybrid(
-            facebook::jni::alias_ref<jhybridobject> jThis,
-            jlong jsContext,
-            facebook::jni::alias_ref<facebook::react::CallInvokerHolder::javaobject> jsCallInvokerHolder);
+using namespace facebook;
 
-    static void registerNatives();
+class HttpHelper : public jni::HybridClass<HttpHelper> {
+ public:
+  static constexpr auto kJavaDescriptor = "Lcom/reactnativejsicpr/HttpHelper;";
 
-    void installJSIBindings(jstring certPath);
+  static jni::local_ref<jhybriddata> initHybrid(
+      jni::alias_ref<jhybridobject> jThis,
+      jlong jsContext,
+      jni::alias_ref<react::CallInvokerHolder::javaobject> jsCallInvokerHolder);
 
-private:
-    friend HybridBase;
-    facebook::jni::global_ref<HttpHelper::javaobject> javaPart_;
-    facebook::jsi::Runtime *runtime_;
-    jsiHttp::JsiHttp *http;
-    std::shared_ptr<facebook::react::CallInvoker> jsCallInvoker_;
-    explicit HttpHelper(
-            facebook::jni::alias_ref<HttpHelper::jhybridobject> jThis,
-            facebook::jsi::Runtime *rt,
-            std::shared_ptr<facebook::react::CallInvoker> jsCallInvoker);
+  static void registerNatives();
+
+  void installJSIBindings(jni::alias_ref<jni::JString> certPath);
+
+ private:
+  friend HybridBase;
+
+  HttpHelper(
+      jsi::Runtime* runtime,
+      std::shared_ptr<react::CallInvoker> jsCallInvoker);
+
+  std::unique_ptr<jsiHttp::JsiHttp> http_;
+  jsi::Runtime* runtime_;
+  std::shared_ptr<react::CallInvoker> jsCallInvoker_;
 };
 
-
+} // namespace reactnativejsicpr

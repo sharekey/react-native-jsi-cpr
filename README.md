@@ -2,9 +2,15 @@
 
 React Native JSI wrapper for [cpr](https://github.com/libcpr/cpr) curl HTTP client
 
-###Features
+### Features
 - High performance because everything is written in C++ (even the JS functions have C++ bodies!)
 - iOS, Android support
+- React Native New Architecture support through Codegen TurboModules
+
+## Requirements
+
+- React Native 0.84.x
+- New Architecture enabled
 
 ## Installation
 
@@ -14,6 +20,9 @@ React Native JSI wrapper for [cpr](https://github.com/libcpr/cpr) curl HTTP clie
 # after that make yarn install
 # and npx pod-install
 ```
+
+The package includes generated TurboModule artifacts. Rebuild the native application after
+installing or updating it; restarting Metro alone is not sufficient.
 
 ### Import
 ```typescript

@@ -48,16 +48,6 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "arm64-v8a"]
 }
 
- def FOR_HERMES = System.getenv("FOR_HERMES") == "True"
- rootProject.getSubprojects().forEach({ project ->
-   if (project.plugins.hasPlugin("com.android.application")) {
-     FOR_HERMES = project.ext.react.enableHermes
-   }
- })
-
-def reactProperties = new Properties()
-file("$nodeModules/react-native/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
-
 def resolveNdkDirectory(ndkVersion) {
   def localPropertiesFile = rootProject.file("local.properties")
   if (!localPropertiesFile.exists()) {
@@ -92,6 +82,8 @@ if (resolvedNdk != null && resolvedNdk.exists()) {
 }
 
 android {
+  namespace "com.reactnativejsicpr"
+
   buildFeatures {
     prefab true
   }
@@ -102,20 +94,14 @@ android {
     ndkPath resolvedNdk.absolutePath
   }
 
-  buildFeatures {
-    prefab true
-  }
-
   defaultConfig {
     minSdkVersion 24
     targetSdkVersion safeExtGet('targetSdkVersion', 30)
 
     externalNativeBuild {
       cmake {
-        cppFlags "-fexceptions", "-frtti", "-std=c++1y", "-DONANDROID", "-DANDROID"
         arguments '-DANDROID_STL=c++_shared',
-                  "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
-                  "-DNODE_MODULES_DIR=${nodeModules}"
+                  '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
       }
     }
     ndk {
@@ -126,6 +112,12 @@ android {
   externalNativeBuild {
     cmake {
       path "CMakeLists.txt"
+    }
+  }
+
+  sourceSets {
+    main {
+      java.srcDirs += ["generated/java"]
     }
   }
 

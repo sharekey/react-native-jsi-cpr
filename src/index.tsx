@@ -15,28 +15,24 @@ import {
 import { buildURL } from './buildURL';
 import { CurlHelper } from './CurlHelper';
 
-import { NativeModules, Platform } from 'react-native';
+import NativeJsiCpr from './NativeJsiCpr';
 
 export {JsiError, JsiRequest, JsiResponse}
 
 const LINKING_ERROR =
-  `The package 'react-native-jsi-cpr' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+  `The package 'react-native-jsi-cpr' failed to install its JSI bindings. ` +
+  'Make sure the New Architecture is enabled and rebuild the native app.';
 
-const JsiCpr = NativeModules.JsiCpr
-  ? NativeModules.JsiCpr
-  : new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(LINKING_ERROR);
-      },
-    }
-  );
+const isInstalled = NativeJsiCpr.install();
+if (!isInstalled) {
+  throw new Error(LINKING_ERROR);
+}
 
-JsiCpr.install();
+const installedJsiHttp = global.jsiHttp;
+if (!installedJsiHttp) {
+  throw new Error(LINKING_ERROR);
+}
+const jsiHttp = installedJsiHttp as NonNullable<typeof global.jsiHttp>;
 
 
 
@@ -253,8 +249,7 @@ export class JsiHttp {
       );
       if (requestParams.requestId === undefined)
         requestParams.requestId = (incr++).toString();
-      //@ts-ignore
-      global.jsiHttp.makeHttpRequest(
+      jsiHttp.makeHttpRequest(
         requestParams,
         (response: any, error: any) => {
           processResponse(
@@ -321,7 +316,6 @@ export class JsiHttp {
   }
 
   cancelRequest = (requestId: string) => {
-    //@ts-ignore
-    global.jsiHttp.httpCancelRequest(requestId);
+    jsiHttp.httpCancelRequest(requestId);
   };
 }

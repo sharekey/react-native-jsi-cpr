@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "13.0" }
   s.source       = { :git => "https://github.com/sergeymild/react-native-jsi-cpr.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm}", "cpp/**/*.{h,cpp}"
+  s.source_files = "ios/**/*.{h,m,mm}", "cpp/**/*.{h,cpp}", "ios/generated/**/*.{h,cpp,mm}"
 
   s.subspec 'cpr' do |ali|
      ali.source_files = 'cpp/include/**/*.{h,cpp}'
@@ -21,11 +21,10 @@ Pod::Spec.new do |s|
   end
 
   s.pod_target_xcconfig    = {
-    "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
+    "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
   }
 
-  s.dependency "React"
-  s.dependency "React-Core"
-  s.dependency "React-callinvoker"
   s.dependency 'curl'
+
+  install_modules_dependencies(s)
 end
